@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../Navbar";
-
+import { useParams, useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -10,7 +9,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 
-import "./CreateBlog.css"
+import "./EditBlog.css";
+
 
 const tags = [
     {
@@ -35,55 +35,55 @@ const tags = [
     }
 ];
 
-function CreateBlog() {
-    const API_url = "http://127.0.0.1:3000/createBlog"
+function EditBlog() {
     const navigate = useNavigate();
+    const id = useParams();
 
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [tag, setTag] = useState("")
-    const [date, setDate] = useState(new Date());
-
+    
+    
+    console.log("Blog ID", id.blogId);
+    
     useEffect(() => {
-        var timer = setInterval(() => setDate(new Date()), 1000)
-        return function cleanup() {
-            clearInterval(timer)
+        async function getBlogInfo() {
+            const API_url = `http://127.0.0.1:3000/myBlogInfo/${id.blogId}`;
+            console.log(API_url, "APiiiiiiii");
+            
+            let response = await axios.get(API_url);
+            console.log("response---->>>>", response.data);
+            setTitle(response.data[0].title);
+            setDesc(response.data[0].disciption);
+            setTag(response.data[0].tag)
         }
-
-    });
-
-    const titleHandler = (e) => setTitle(e.target.value)
+        
+        getBlogInfo();
+    }, []);
+    
+    const titleHandler =(e) => setTitle(e.target.value);
     const descHandler = (e) => setDesc(e.target.value);
     const tagHandler = (e) => setTag(e.target.value)
 
-    const blogHandler = async (e) => {
-        e.preventDefault();
 
-        let blog = {
-            title: title,
-            desc: desc,
-            tag: tag,
-            // userId:5,
-            date: date.toLocaleDateString(),
-            time: date.toLocaleTimeString()
-        }
-        console.log(blog);
+    async function editFormHandler(event){
+        event.preventDefault()
+        let data = await axios.put(`http://localhost:3000/editMyBlog/${id.blogId}`,{title:title,disciption:desc,tag: tag})
+        console.log("Response given by submit key",data.response);
+        setTitle("");
+        setDesc("");
+        setTag("");
+        navigate("/myblogs",{replace:true})
 
-        let response = await axios.post(API_url,blog)
-        if(response.status === 200){
-            navigate("/", {replace:true})
-        }else{
+    } 
 
-        }
-        console.log("Responses---------",response)
-        setTitle(""); setDesc(""); setTag("");
-    }
-
+    console.log("title: " + title);
+    console.log("desc: " + desc);
+    
     return <>
-        <Navbar />
-        <div className="createBlog">
-            <h1>Create A Blog</h1>
-
+        <Navbar/>
+        <div className="editBlog">
+            <h1 className="editBlog_title">Edit Your Blog</h1>
             <Box
                 component="form"
                 sx={{
@@ -121,7 +121,7 @@ function CreateBlog() {
                         onChange={descHandler}
                     />
                 </div>
-                <Button className="blog_btn" onClick={blogHandler} variant="contained" endIcon={<SendIcon />}>
+                <Button className="blog_btn" onClick={editFormHandler} variant="contained" endIcon={<SendIcon />}>
                     Send
                 </Button>
             </Box>
@@ -129,4 +129,5 @@ function CreateBlog() {
     </>
 }
 
-export default CreateBlog;
+
+export default EditBlog;

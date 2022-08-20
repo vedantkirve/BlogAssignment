@@ -4,7 +4,9 @@ import ReactDOM from 'react-dom/client';
 import Register from './component/Register/Register';
 import Login from './component/Login/Login';
 import CreateBlog from './component/CreateBlog/CreateBlog';
-
+import EditBlog from './component/EditBlog/EditBlog';
+import MyBlogs from './component/MyBlog/MyBlog';
+import BlogDetails from './component/BlogDetails/BlogDetails';
 import App from './App';
 
 import {
@@ -21,10 +23,15 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path='/' element={<App/>}> </Route>
+      <Route path='/' element={<Login/>}></Route>
+      <Route path='/home' element={<App/>}> </Route>
       <Route path="/register" element={<Register/>}></Route>
-      <Route path='/login' element={<Login/>}></Route>
       <Route path='/createblog' element={<CreateBlog/>}></Route>
+      <Route path='/editblog' element={<EditBlog/>}></Route>
+      <Route path='/myblogs' element={<MyBlogs/>}></Route>
+      <Route path='/blogDetail' element={<BlogDetails/>}></Route>
+
+
 
     </Routes>
   </BrowserRouter>

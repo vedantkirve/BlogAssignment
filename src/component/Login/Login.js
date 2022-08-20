@@ -1,4 +1,5 @@
 import { useState } from "react"
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 
@@ -11,7 +12,7 @@ function Login(props){
     const emailHandler =(event) => setEmail(event.target.value)
     const passwordHandler =(event) => setPassword(event.target.value)
 
-    const formHandler =(event)=>{
+    const formHandler =async(event)=>{
         event.preventDefault();
 
         console.log("form submitted")
@@ -23,6 +24,13 @@ function Login(props){
         }
         setEmail("");
         setPassword("");
+
+        let userID = await axios.post("http://127.0.0.1:3000/userId", data)
+
+        console.log(userID.data[0]);
+        localStorage.setItem("userID", userID.data[0].id);
+        localStorage.setItem("authorName", userID.data[0].firstName+" "+userID.data[0].lastName);
+        
         props.getData(data);
     }    
 
